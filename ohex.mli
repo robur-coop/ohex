@@ -1,10 +1,14 @@
-(** Convert from and to hex representation. *)
+(** Convert from and to hexadecimal representation. *)
 
-val count_hex_chars : ?skip_whitespace:bool -> string -> int
-(** [count_hex_chars ~skip_whitespace s] counts the amount of hex characters in
-    the string [s]. The argument [skip_whitespace] defaults to [true], and skips
-    any whitespace characters (' ', '\n', '\r', '\t'). This function is useful
-    for estimating the space required for [decode_into]. *)
+val required_length : ?skip_whitespace:bool -> string -> int
+(** [required_length ~skip_whitespace s] returns the length needed when the
+    hex string [s] would be decoded into a sequence of octets. The argument
+    [skip_whitespace] defaults to [true], and skips any whitespace characters
+    (' ', '\n', '\r', '\t'). This function is useful for estimating the space
+    required for [decode_into].
+
+    @raise Invalid_argument if any character in [s] is not a hex character, or
+    an odd amount of characters are present. *)
 
 val decode : ?skip_whitespace:bool -> string -> string
 (** [decode ~skip_whitespace s] decodes a hex string [s] into a sequence of

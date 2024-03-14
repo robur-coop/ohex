@@ -8,25 +8,32 @@ let is_space = function
   | ' ' | '\n' | '\r' | '\t' -> true
   | _ -> false
 
-let count_hex_chars ?(skip_whitespace = true) src =
-  if skip_whitespace then
+let digit = function
+  | '0'..'9' as c -> int_of_char c - 0x30
+  | 'A'..'F' as c -> int_of_char c - 0x41 + 10
+  | 'a'..'f' as c -> int_of_char c - 0x61 + 10
+  | _ -> invalid_arg "bad character"
+
+let required_length ?(skip_whitespace = true) src =
+  let req =
     string_fold (fun r c ->
-      if is_space c then r else succ r)
-    0 src / 2
+        if skip_whitespace && is_space c then
+          r
+        else (
+          ignore (digit c);
+          succ r))
+      0 src
+  in
+  if req mod 2 = 0 then
+    req / 2
   else
-    String.length src / 2
+    invalid_arg "leftover byte in hex string"
 
 let decode_into ?(skip_whitespace = true) src tgt ?(off = 0) () =
   let fold f acc str =
     let st = ref acc in
     String.iter (fun c -> st := f !st c) str;
     !st
-  and digit c =
-    match c with
-    | '0'..'9' -> int_of_char c - 0x30
-    | 'A'..'F' -> int_of_char c - 0x41 + 10
-    | 'a'..'f' -> int_of_char c - 0x61 + 10
-    | _ -> invalid_arg "bad character"
   in
   let chars, leftover =
     fold (fun (chars, leftover) c ->
@@ -45,19 +52,21 @@ let decode_into ?(skip_whitespace = true) src tgt ?(off = 0) () =
   List.iteri (fun idx c -> Bytes.set_uint8 tgt (off + idx) c) chars
 
 let decode ?(skip_whitespace = true) src =
-  let len = count_hex_chars ~skip_whitespace src in
+  let len = required_length ~skip_whitespace src in
   let buf = Bytes.create len in
   decode_into ~skip_whitespace src buf ();
   Bytes.unsafe_to_string buf
+
+let hex_map = "0123456789abcdef"
 
 let encode_into src tgt ?(off = 0) () =
   String.iteri (fun idx c ->
       let hi, lo =
         let i = int_of_char c in
-        i lsr 4, i land 0xFF
+        hex_map.[i lsr 4], hex_map.[i land 0x0F]
       in
-      Bytes.set_uint8 tgt (idx * 2 + off) hi;
-      Bytes.set_uint8 tgt (idx * 2 + off + 1) lo)
+      Bytes.set tgt (idx * 2 + off) hi;
+      Bytes.set tgt (idx * 2 + off + 1) lo)
     src
 
 let encode src =

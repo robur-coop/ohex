@@ -2,3 +2,8 @@
   (name ohex)
   (public_name ohex)
   (modules ohex))
+
+(test
+  (name tests)
+  (modules tests)
+  (libraries alcotest ohex))
