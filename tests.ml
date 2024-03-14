@@ -53,6 +53,22 @@ let bad_len_dec_tests =
                       (fun () -> ignore (Ohex.decode ~skip_whitespace:false s)))))
       bad_input_ws)
 
+let enc_tests = [
+  "A", "41", 2;
+  "AA", "4141", 4;
+  "AAA", "414141", 6;
+]
+
+let enc_tests =
+  List.mapi (fun i (v, hex, l) ->
+      string_of_int i ^ " is correct", `Quick,
+      (fun () ->
+         Alcotest.(check string "encode works" hex (Ohex.encode v));
+         let buf = Bytes.create l in
+         Ohex.encode_into v buf ~off:0 ();
+         Alcotest.(check string "encode_into works" hex (Bytes.unsafe_to_string buf))))
+    enc_tests
+
 let dec_enc () =
   let random_string () =
     let size = Random.int 128 in
@@ -79,6 +95,7 @@ let dec_enc () =
 let suites = [
   "length and decode pass", len_dec_tests ;
   "bad input", bad_len_dec_tests ;
+  "encode tests", enc_tests ;
   "decode encode", [ "decode (encode s) = s", `Quick, dec_enc ];
 ]
 
