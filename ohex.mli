@@ -27,7 +27,9 @@ val decode_into : ?skip_whitespace:bool -> string -> bytes -> ?off:int -> unit
 
 val encode : string -> string
 (** [encode s] encodes [s] into a freshly allocated string of double size, where
-    each character in [s] is encoded as two hex digits in the returned string. *)
+    each character in [s] is encoded as two hex digits in the returned string.
+    An example: [encode "AB" = "4142"].
+*)
 
 val encode_into : string -> bytes -> ?off:int -> unit -> unit
 (** [encode_into s dst ~off ()] encodes [s] into [dst] starting at [off]
