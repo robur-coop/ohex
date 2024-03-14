@@ -102,10 +102,11 @@ let pp ?(row_numbers = true) ?(chars = true) () ppf s =
        String.sub s (l - (l mod 16)) (l mod 16),
        pad
      in
-     let pad_chars = pad * 2 + (pad + 1) / 2 + (if pad > 8 then 1 else 0) + 1 in
-     Format.pp_print_string ppf (String.make pad_chars ' ');
-     String.iter (fun c ->
-         Format.pp_print_char ppf (if printable_ascii c then c else '.'))
-       last_n);
+     if pad > 0 then
+       let pad_chars = pad * 2 + (pad + 1) / 2 + (if pad > 8 then 1 else 0) + 1 in
+       Format.pp_print_string ppf (String.make pad_chars ' ');
+       String.iter (fun c ->
+           Format.pp_print_char ppf (if printable_ascii c then c else '.'))
+         last_n);
   if String.length s mod 16 <> 0 then
     Format.pp_print_string ppf "\n"
