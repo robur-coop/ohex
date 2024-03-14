@@ -9,12 +9,12 @@ let is_space = function
   | _ -> false
 
 let count_hex_chars ?(skip_whitespace = true) src =
-  string_fold (fun r c ->
-      if skip_whitespace && is_space c then
-        r
-      else
-        succ r)
+  if skip_whitespace then
+    string_fold (fun r c ->
+      if is_space c then r else succ r)
     0 src / 2
+  else
+    String.length src / 2
 
 let decode_into ?(skip_whitespace = true) src tgt ?(off = 0) () =
   let fold f acc str =
