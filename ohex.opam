@@ -1,0 +1,22 @@
+opam-version: "2.0"
+maintainer: "Hannes Mehnert <hannes@mehnert.org>"
+authors: "Hannes Mehnert <hannes@mehnert.org>"
+license: "ISC"
+homepage: "https://git.robur.coop/robur/ohex"
+doc: "https://robur-coop.github.io/ohex/doc"
+bug-reports: "https://git.robur.coop/robur/ohex/issues"
+depends: [
+  "ocaml" {>= "4.08.0"}
+  "dune"
+  "alcotest" {with-test}
+]
+build: [
+  ["dune" "subst"] {dev}
+  ["dune" "build" "-p" name "-j" jobs]
+  ["dune" "runtest" "-p" name "-j" jobs] {with-test}
+]
+dev-repo: "git+https://git.robur.coop/robur/ohex.git"
+synopsis: "Hexadecimal encoding and decoding"
+description: """
+A library to encode and decode hexadecimal byte sequences.
+"""
