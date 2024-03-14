@@ -7,7 +7,7 @@ doc: "https://robur-coop.github.io/ohex/doc"
 bug-reports: "https://git.robur.coop/robur/ohex/issues"
 depends: [
   "ocaml" {>= "4.08.0"}
-  "dune"
+  "dune" {>= "2.7"}
   "alcotest" {with-test}
 ]
 build: [
