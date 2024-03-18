@@ -41,9 +41,13 @@ val encode_into : string -> bytes -> ?off:int -> unit -> unit
 
     @raise Invalid_argument if [dst] does not contain enough space. *)
 
-val pp : ?row_numbers:bool -> ?chars:bool -> unit ->
+val pp : Format.formatter -> string -> unit
+(** [pp ppf s] pretty-prints the string [s] in hexadecimal. Some spaces are
+    emitted for easier readability. No newline is emitted. *)
+
+val pp_hexdump : ?row_numbers:bool -> ?chars:bool -> unit ->
   Format.formatter -> string -> unit
-(** [pp ~row_numbers ~chars () ppf s] pretty-prints the string [s] in
+(** [pp_hexdump ~row_numbers ~chars () ppf s] pretty-prints the string [s] in
     hexadecimal (similar to [hexdump -C]). If [row_numbers] is provided
     (defaults to [true]), each output line is prefixed with the row number.
     If [chars] is provided (defaults to [true]), in the last column the ASCII

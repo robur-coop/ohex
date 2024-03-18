@@ -78,7 +78,16 @@ let printable_ascii c =
   let i = int_of_char c in
   not (i < 0x20 || i >= 0x7f)
 
-let pp ?(row_numbers = true) ?(chars = true) () ppf s =
+let pp ppf s =
+  String.iteri (fun idx c ->
+      Format.fprintf ppf "%02x" (int_of_char c);
+      if idx mod 2 = 1 then
+        Format.pp_print_string ppf " ";
+      if idx mod 8 = 7 then
+        Format.pp_print_string ppf " ")
+    s
+
+let pp_hexdump ?(row_numbers = true) ?(chars = true) () ppf s =
   String.iteri (fun idx c ->
       if idx mod 16 = 0 && row_numbers then
         Format.fprintf ppf "%06x  " idx;
